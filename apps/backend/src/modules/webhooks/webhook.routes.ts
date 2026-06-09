@@ -5,8 +5,8 @@ import { webhookController } from "./webhook.controller";
 const webhookRouter = Router();
 
 webhookRouter.post(
-    "/status",
-    asyncHandler(webhookController.handleStatusCallback),
+  "/status",
+  asyncHandler(webhookController.handleStatusCallback),
 );
 
 export default webhookRouter;

@@ -5,8 +5,8 @@ import { analyticsController } from "./analytics.controller";
 const analyticsRouter = Router();
 
 analyticsRouter.get(
-    "/:campaignId",
-    asyncHandler(analyticsController.getAnalytics),
+  "/:campaignId",
+  asyncHandler(analyticsController.getAnalytics),
 );
 
 export default analyticsRouter;

@@ -23,5 +23,5 @@ app.use("/api/v1/analytics", analyticsRouter);
 app.use(errorMiddleware);
 
 app.listen(env.PORT, () => {
-    console.log(`Server is running on port ${env.PORT}`);
+  console.log(`Server is running on port ${env.PORT}`);
 });
