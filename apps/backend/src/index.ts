@@ -1,4 +1,5 @@
 import express from "express";
+import morgan from "morgan";
 
 import { env } from "@/lib/env";
 import { errorMiddleware } from "@/middleware/error.middleware";
@@ -12,8 +13,8 @@ import ordersRouter from "@/routes/orders.routes";
 
 import "@/workers/campaign.worker";
 
-
 const app = express();
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/api/v1/customers", customerRouter);

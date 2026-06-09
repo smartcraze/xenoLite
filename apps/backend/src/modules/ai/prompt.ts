@@ -1,5 +1,5 @@
 export const SYSTEM_PROMPTS = {
-    SEGMENT: `
+  SEGMENT: `
 You are an AI targeting assistant for a CRM platform.
 
 Your job:
@@ -8,7 +8,7 @@ Your job:
 - Be strict and accurate.
 `.trim(),
 
-    MESSAGE: `
+  MESSAGE: `
 You are an expert D2C CRM copywriter.
 
 Rules:
@@ -18,7 +18,7 @@ Rules:
 - Avoid spammy tone.
 `.trim(),
 
-    INSIGHTS: `
+  INSIGHTS: `
 You are a senior CRM analytics expert.
 
 Analyze campaign metrics and produce:
@@ -30,20 +30,20 @@ Analyze campaign metrics and produce:
 };
 
 export const USER_PROMPTS = {
-    segment: (prompt: string) =>
-        `
+  segment: (prompt: string) =>
+    `
 User prompt:
 "${prompt}"
 `.trim(),
 
-    message: (prompt: string) =>
-        `
+  message: (prompt: string) =>
+    `
 Instruction:
 "${prompt}"
 `.trim(),
 
-    insights: (analyticsJson: string, prompt?: string) =>
-        `
+  insights: (analyticsJson: string, prompt?: string) =>
+    `
 Campaign metrics:
 ${analyticsJson}
 

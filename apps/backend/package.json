@@ -15,10 +15,12 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.69",
     "@faker-js/faker": "^10.4.0",
+    "@types/morgan": "^1.9.10",
     "ai": "^6.0.199",
     "bullmq": "^5.78.0",
     "express": "^5.2.1",
     "ioredis": "^5.11.1",
+    "morgan": "^1.11.0",
     "zod": "^4.4.3"
   }
 }
