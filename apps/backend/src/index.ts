@@ -1,14 +1,17 @@
 import express from "express";
-import { env } from "./lib/env";
-import { errorMiddleware } from "./middleware/error.middleware";
-import analyticsRouter from "./modules/analytics/analytics.routes";
-import webhookRouter from "./modules/webhooks/webhook.routes";
-import aiRouter from "./routes/ai.routes";
-import campaignsRouter from "./routes/campaigns.routes";
-import customerRouter from "./routes/customer.routes";
-import ordersRouter from "./routes/orders.routes";
 
-import "./workers/campaign.worker";
+import { env } from "@/lib/env";
+import { errorMiddleware } from "@/middleware/error.middleware";
+import analyticsRouter from "@/modules/analytics/analytics.routes";
+import webhookRouter from "@/modules/webhooks/webhook.routes";
+
+import aiRouter from "@/routes/ai.routes";
+import campaignsRouter from "@/routes/campaigns.routes";
+import customerRouter from "@/routes/customer.routes";
+import ordersRouter from "@/routes/orders.routes";
+
+import "@/workers/campaign.worker";
+
 
 const app = express();
 app.use(express.json());
@@ -23,5 +26,5 @@ app.use("/api/v1/analytics", analyticsRouter);
 app.use(errorMiddleware);
 
 app.listen(env.PORT, () => {
-  console.log(`Server is running on port ${env.PORT}`);
+    console.log(`Server is running on port ${env.PORT}`);
 });

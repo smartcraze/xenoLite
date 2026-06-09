@@ -19,7 +19,10 @@
       "turborepo": "recommended"
     },
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
     }
   },
   "javascript": {
