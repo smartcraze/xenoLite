@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { errorMiddleware } from "@/middleware/error.middleware";
 import agentRouter from "@/modules/agents/agent.routes";
 import analyticsRouter from "@/modules/analytics/analytics.routes";
+import authRouter from "@/modules/auth/auth.routes";
 import webhookRouter from "@/modules/webhooks/webhook.routes";
 import aiRouter from "@/routes/ai.routes";
 import campaignsRouter from "@/routes/campaigns.routes";
@@ -24,6 +25,7 @@ app.use("/api/v1/campaigns", campaignsRouter);
 app.use("/api/v1/webhooks", webhookRouter);
 app.use("/api/v1/analytics", analyticsRouter);
 app.use("/api/v1/agents", agentRouter);
+app.use("/api/v1/auth", authRouter);
 
 app.use(errorMiddleware);
 

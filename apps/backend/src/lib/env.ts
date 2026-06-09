@@ -13,6 +13,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),
+  JWT_SECRET: z.string().default("crm-default-jwt-secret-key-123"),
 });
 
 const result = envSchema.safeParse(process.env);

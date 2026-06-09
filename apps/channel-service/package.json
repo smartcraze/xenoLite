@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "bun --watch index.ts",
-    "build": "tsc --noEmit",
+    "build": "bun build index.ts --outdir dist --target bun --minify",
+    "start": "bun run build && bun run dist/index.js",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {

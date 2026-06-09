@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { asyncHandler } from "../lib/async-handler";
+import { authMiddleware } from "../middleware/auth.middleware";
 import { campaignController } from "../modules/campaigns/campaign.controller";
 
 const campaignsRouter = Router();
+campaignsRouter.use(authMiddleware);
 
 campaignsRouter.get("/", asyncHandler(campaignController.list));
 campaignsRouter.post("/", asyncHandler(campaignController.create));
