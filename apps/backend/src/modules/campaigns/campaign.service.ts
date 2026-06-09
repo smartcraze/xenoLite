@@ -49,7 +49,7 @@ export const campaignService = {
             totalSpent: { gte: parsed.minSpent },
           };
         }
-      } catch (e) {
+      } catch (_e) {
         console.warn("Invalid audience query JSON", campaign.audienceQuery);
       }
     }

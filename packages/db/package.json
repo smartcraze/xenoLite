@@ -3,6 +3,12 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "echo 'No dev step for db'",
+    "build": "prisma generate",
+    "check-types": "tsc --noEmit",
+    "seed": "bun prisma/seed.ts"
+  },
   "exports": {
     ".": "./index.ts"
   },

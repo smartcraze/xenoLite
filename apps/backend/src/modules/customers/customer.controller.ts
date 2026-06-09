@@ -1,10 +1,6 @@
 import type { Request, Response } from "express";
 import { sendSuccess } from "../../lib/api-response";
-import {
-  createCustomerSchema,
-  customersQuerySchema,
-  seedCustomersSchema,
-} from "./customer.dto";
+import { createCustomerSchema, customersQuerySchema } from "./customer.dto";
 import { customerService } from "./customer.service";
 
 export const customerController = {
@@ -32,18 +28,6 @@ export const customerController = {
       201,
       { customer },
       "Customer created successfully",
-    );
-  },
-
-  async seed(request: Request, response: Response) {
-    const body = seedCustomersSchema.parse(request.body ?? {});
-    const result = await customerService.seedCustomers(body);
-
-    return sendSuccess(
-      response,
-      201,
-      result,
-      "Seed data generated successfully",
     );
   },
 };

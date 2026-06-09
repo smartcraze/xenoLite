@@ -8,25 +8,24 @@ app.use(express.json());
 const PORT = process.env.PORT || 3001;
 
 const sendPayloadSchema = z.object({
-    communicationId: z.string(),
-    message: z.string(),
-    channel: z.string(),
+  communicationId: z.string(),
+  message: z.string(),
+  channel: z.string(),
 });
 
-
 app.post("/send", (req, res) => {
-    try {
-        const payload = sendPayloadSchema.parse(req.body);
+  try {
+    const payload = sendPayloadSchema.parse(req.body);
 
-        res.status(200).json({ success: true, message: "Accepted for delivery" });
+    res.status(200).json({ success: true, message: "Accepted for delivery" });
 
-        void simulateLifecycle(payload.communicationId);
-    } catch (error) {
-        res.status(400).json({ success: false, error: "Invalid payload" });
-        console.log("[Invalid Payload]", error);
-    }
+    void simulateLifecycle(payload.communicationId);
+  } catch (error) {
+    res.status(400).json({ success: false, error: "Invalid payload" });
+    console.log("[Invalid Payload]", error);
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`Channel Service mock running on port ${PORT}`);
+  console.log(`Channel Service mock running on port ${PORT}`);
 });

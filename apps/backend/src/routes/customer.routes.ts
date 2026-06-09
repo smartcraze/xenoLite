@@ -6,6 +6,5 @@ const customerRouter = Router();
 
 customerRouter.get("/", asyncHandler(customerController.list));
 customerRouter.post("/", asyncHandler(customerController.create));
-customerRouter.post("/seed", asyncHandler(customerController.seed));
 
 export default customerRouter;

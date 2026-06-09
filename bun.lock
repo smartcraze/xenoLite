@@ -42,6 +42,7 @@
         "zod": "^4.4.3",
       },
       "devDependencies": {
+        "@repo/tsconfig": "workspace:*",
         "@types/bun": "latest",
         "@types/express": "^5.0.6",
       },
