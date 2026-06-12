@@ -18,7 +18,7 @@ const chatLimit = rateLimit({
 // Suggestions and message generation are single calls, limit to 10 requests per minute
 const standardLimit = rateLimit({
   windowMs: 60 * 1000,
-  max: 10,
+  max: 2,
   message: "Rate limit exceeded. Please try again in a minute.",
 });
 
