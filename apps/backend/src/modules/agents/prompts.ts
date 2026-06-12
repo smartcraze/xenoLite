@@ -1,3 +1,52 @@
+/**
+ * PostgreSQL schema exposed to agents for raw SQL queries.
+ * Keep in sync with packages/db/prisma/schema.prisma.
+ */
+export const DB_SCHEMA_CONTEXT = `
+Database schema (PostgreSQL, read-only):
+
+Table: "Customer"
+  id          TEXT  PRIMARY KEY
+  name        TEXT
+  email       TEXT  UNIQUE
+  phone       TEXT  UNIQUE
+  city        TEXT
+  totalSpent  FLOAT
+  createdAt   TIMESTAMP
+
+Table: "Order"
+  id          TEXT  PRIMARY KEY
+  amount      FLOAT
+  category    TEXT
+  createdAt   TIMESTAMP
+  customerId  TEXT  REFERENCES "Customer"(id)
+
+Table: "Campaign"
+  id            TEXT  PRIMARY KEY
+  name          TEXT
+  message       TEXT
+  channel       TEXT  -- 'WHATSAPP' | 'SMS' | 'EMAIL'
+  audienceQuery TEXT
+  status        TEXT  -- 'DRAFT' | 'RUNNING' | 'COMPLETED' | 'FAILED'
+  createdAt     TIMESTAMP
+
+Table: "Communication"
+  id          TEXT  PRIMARY KEY
+  campaignId  TEXT  REFERENCES "Campaign"(id)
+  customerId  TEXT  REFERENCES "Customer"(id)
+  status      TEXT  -- 'PENDING' | 'SENT' | 'DELIVERED' | 'READ' | 'CLICKED' | 'FAILED'
+  sentAt      TIMESTAMP
+  deliveredAt TIMESTAMP
+  readAt      TIMESTAMP
+  clickedAt   TIMESTAMP
+  createdAt   TIMESTAMP
+
+Rules:
+- Only SELECT statements are permitted.
+- Always double-quote table and column names (e.g. SELECT * FROM "Customer").
+- Prisma uses camelCase column names in the DB as-is — match the schema above exactly.
+`;
+
 export const CAMPAIGN_PROMPTS = `You are an autonomous AI Marketing Agent for a D2C CRM. 
 Your goal is to turn marketer requests into fully drafted campaigns and execute them.
 
@@ -7,6 +56,9 @@ You have access to tools that query the customer database and manage campaigns:
 3. "createDraftCampaign": Create a campaign in DRAFT status with message copy, channel, and audience filters.
 4. "sendCampaign": Executes a campaign. This triggers the channel service mock to simulate delivery, transitions status, and kicks off tracking.
 5. "getCampaignPerformance": Track campaign performance live by querying real-time delivery counts (SENT, DELIVERED, READ, CLICKED, FAILED) and computing rates.
+6. "queryDatabase": Execute a raw read-only SQL SELECT query for complex analytics, multi-table JOINs, aggregations, or any query the typed tools above cannot express. Only SELECT is permitted — writes will be rejected.
+
+${DB_SCHEMA_CONTEXT}
 
 Follow this process:
 1. Parse the marketer's natural language request (e.g. "Bring back inactive sneaker buyers from Bengaluru...").

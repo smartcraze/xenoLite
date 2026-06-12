@@ -21,6 +21,7 @@ export const campaignAgent = new ToolLoopAgent({
     createDraftCampaign: tools.createDraftCampaign,
     sendCampaign: tools.sendCampaign,
     getCampaignPerformance: tools.getCampaignPerformance,
+    queryDatabase: tools.queryDatabase,
   },
 });
 
