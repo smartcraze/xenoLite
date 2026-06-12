@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { asyncHandler } from "../../lib/async-handler";
-import { authMiddleware } from "../../middleware/auth.middleware";
 import { rateLimit } from "../../middleware/rate-limit.middleware";
 import { agentController } from "./agent.controller";
 
 const agentRouter = Router();
 
-agentRouter.use(authMiddleware);
+// agentRouter.use(authMiddleware);
 
 // Chat campaign is very expensive (multi-step OpenAI calls + db queries), limit to 3 requests per minute
 const chatLimit = rateLimit({
@@ -28,6 +27,7 @@ agentRouter.post(
   chatLimit,
   asyncHandler(agentController.chatCampaign),
 );
+
 agentRouter.get(
   "/suggestions",
   standardLimit,

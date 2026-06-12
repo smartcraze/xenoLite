@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { asyncHandler } from "../lib/async-handler";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { rateLimit } from "../middleware/rate-limit.middleware";
-import { aiController } from "../modules/ai/ai.controller";
+import { asyncHandler } from "@/lib/async-handler";
+import { authMiddleware } from "@/middleware/auth.middleware";
+import { rateLimit } from "@/middleware/rate-limit.middleware";
+import { aiController } from "./ai.controller";
 
 const aiRouter = Router();
 aiRouter.use(authMiddleware);

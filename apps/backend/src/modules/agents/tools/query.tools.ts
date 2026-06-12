@@ -14,6 +14,20 @@ function assertReadOnly(sql: string): void {
   }
 }
 
+/**
+ * PostgreSQL aggregate functions (COUNT, SUM, etc.) return BigInt via Prisma.
+ * JSON.stringify cannot handle BigInt, so convert to Number here.
+ * Precision loss only occurs for integers > 2^53; that won't happen in this app.
+ */
+function serializeRow(row: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(row).map(([k, v]) => [
+      k,
+      typeof v === "bigint" ? Number(v) : v,
+    ]),
+  );
+}
+
 export const queryDatabase = tool({
   description:
     "Execute a read-only raw SQL SELECT query against the database. " +
@@ -31,12 +45,11 @@ export const queryDatabase = tool({
   execute: async ({ sql }) => {
     assertReadOnly(sql);
 
-    // $queryRawUnsafe returns unknown[] — cast to record array for the agent
     const rows = await prisma.$queryRawUnsafe<Record<string, unknown>[]>(sql);
 
     return {
       rowCount: rows.length,
-      rows,
+      rows: rows.map(serializeRow),
     };
   },
 });

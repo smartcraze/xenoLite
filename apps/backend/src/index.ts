@@ -7,12 +7,12 @@ import agentRouter from "@/modules/agents/agent.routes";
 import analyticsRouter from "@/modules/analytics/analytics.routes";
 import authRouter from "@/modules/auth/auth.routes";
 import webhookRouter from "@/modules/webhooks/webhook.routes";
-import aiRouter from "@/routes/ai.routes";
-import campaignsRouter from "@/routes/campaigns.routes";
-import customerRouter from "@/routes/customer.routes";
-import ordersRouter from "@/routes/orders.routes";
 
 import "@/workers/campaign.worker";
+import aiRouter from "./modules/ai/ai.routes";
+import campaignsRouter from "./modules/campaigns/campaigns.routes";
+import customerRouter from "./modules/customers/customer.routes";
+import ordersRouter from "./modules/orders/orders.routes";
 
 const app = express();
 app.use(morgan("dev"));

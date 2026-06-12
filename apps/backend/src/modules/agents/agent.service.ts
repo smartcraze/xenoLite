@@ -84,7 +84,6 @@ export const agentService = {
 
     return {
       text: result.text,
-      steps: result.steps ?? [],
     };
   },
 
