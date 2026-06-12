@@ -37,7 +37,8 @@ async function main() {
 
   // Generate 100 realistic customers with targeted profiles
   for (let i = 0; i < 100; i++) {
-    const name = NAMES[i % NAMES.length] + " " + (Math.floor(i / NAMES.length) + 1);
+    const name =
+      NAMES[i % NAMES.length] + " " + (Math.floor(i / NAMES.length) + 1);
     const email = `customer-${i + 1}@example.com`;
     const phone = `+919876543${String(i + 1).padStart(3, "0")}`;
     const city = CITIES[i % CITIES.length];
@@ -113,9 +114,13 @@ async function main() {
       // General random customers
       const orderCount = 1 + (i % 4);
       for (let j = 0; j < orderCount; j++) {
-        const category = ["Sneakers", "Apparel", "Beauty", "Accessories", "Coffee"][
-          (i + j) % 5
-        ];
+        const category = [
+          "Sneakers",
+          "Apparel",
+          "Beauty",
+          "Accessories",
+          "Coffee",
+        ][(i + j) % 5];
         const amount = 500 + ((i * 123 + j * 50) % 4500);
         orders.push({
           amount,
@@ -157,7 +162,9 @@ async function main() {
     orderCount += customer.orders.length;
   }
 
-  console.log(`Successfully seeded database: ${customerCount} customers, ${orderCount} orders created.`);
+  console.log(
+    `Successfully seeded database: ${customerCount} customers, ${orderCount} orders created.`,
+  );
 }
 
 main()
