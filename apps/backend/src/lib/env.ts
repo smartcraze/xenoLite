@@ -2,8 +2,8 @@ import { z } from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().url().default("redis://localhost:6379"),
-  OPENAI_API_KEY: z.string().default("dummy-key"),
+  REDIS_URL: z.string().url(),
+  OPENAI_API_KEY: z.string(),
   CHANNEL_SERVICE_URL: z.string().url().default("http://localhost:3001/send"),
   PORT: z
     .string()
