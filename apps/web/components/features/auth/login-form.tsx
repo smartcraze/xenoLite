@@ -9,7 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
+import Image from "next/image";
 import { toast } from "sonner";
+import { APP_CONFIG } from "@/lib/constants";
 
 export function LoginForm() {
   const router = useRouter();
@@ -34,9 +36,14 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="space-y-3 items-center text-center">
-        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-          <Sparkles className="h-6 w-6 text-primary" />
-        </div>
+        <Image 
+          src="/logo.png" 
+          alt={APP_CONFIG.NAME} 
+          width={200} 
+          height={50} 
+          className="object-contain h-10 w-auto mb-2" 
+          priority
+        />
         <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
         <CardDescription>
           Enter your credentials to access your CRM
