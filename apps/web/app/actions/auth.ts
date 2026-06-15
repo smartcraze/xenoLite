@@ -1,8 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { APP_CONFIG } from "@/lib/constants";
 import { redirect } from "next/navigation";
+import { APP_CONFIG } from "@/lib/constants";
 
 export async function login(formData: FormData) {
   const email = formData.get("email");

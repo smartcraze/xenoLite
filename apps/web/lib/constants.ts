@@ -7,11 +7,15 @@ export const APP_CONFIG = {
 
 export const SIDEBAR_ITEMS = [
   { title: "Dashboard", iconName: "Home", url: "/dashboard" },
-  { title: "AI Copilot", iconName: "Sparkles", url: "/dashboard/ai-copilot" },
+  { title: "AI Copilot", iconName: "Sparkles", url: "/dashboard/copilot" },
   { title: "Campaigns", iconName: "Send", url: "/dashboard/campaigns" },
   { title: "Customers", iconName: "Users", url: "/dashboard/customers" },
   { title: "Analytics", iconName: "BarChart3", url: "/dashboard/analytics" },
   { title: "Messages", iconName: "MessageSquare", url: "/dashboard/messages" },
-  { title: "Integrations", iconName: "LayoutGrid", url: "/dashboard/integrations" },
+  {
+    title: "Integrations",
+    iconName: "LayoutGrid",
+    url: "/dashboard/integrations",
+  },
   { title: "Settings", iconName: "Settings", url: "/dashboard/settings" },
 ];

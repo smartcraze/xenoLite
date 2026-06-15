@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { Sparkles } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import { login } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
-import { Sparkles } from "lucide-react";
-
-import Image from "next/image";
-import { toast } from "sonner";
 import { APP_CONFIG } from "@/lib/constants";
 
 export function LoginForm() {
@@ -21,9 +27,9 @@ export function LoginForm() {
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError("");
-    
+
     const result = await login(formData);
-    
+
     if (result.error) {
       toast.error(result.error);
       setLoading(false);
@@ -36,12 +42,12 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="space-y-3 items-center text-center">
-        <Image 
-          src="/logo.png" 
-          alt={APP_CONFIG.NAME} 
-          width={200} 
-          height={50} 
-          className="object-contain h-10 w-auto mb-2" 
+        <Image
+          src="/logo.png"
+          alt={APP_CONFIG.NAME}
+          width={200}
+          height={50}
+          className="object-contain h-10 w-auto mb-2"
           priority
         />
         <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
@@ -73,7 +79,7 @@ export function LoginForm() {
               className="bg-muted/50 border-border/50"
             />
           </div>
-          
+
           <Button className="w-full" type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
@@ -82,7 +88,10 @@ export function LoginForm() {
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">
           Don't have an account?{" "}
-          <Link href="/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
+          <Link
+            href="/signup"
+            className="text-primary hover:text-primary/80 font-medium transition-colors"
+          >
             Sign up
           </Link>
         </p>

@@ -1,9 +1,15 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Send } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 export function AiCopilot() {
   return (
@@ -21,19 +27,30 @@ export function AiCopilot() {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col justify-end">
         <div className="relative mt-auto">
-          <Textarea 
-            placeholder="e.g., 'Draft a campaign for users who haven't purchased in 30 days...'" 
+          <Textarea
+            placeholder="e.g., 'Draft a campaign for users who haven't purchased in 30 days...'"
             className="min-h-[120px] resize-none pr-12 pb-12 bg-muted/50 border-border/50 focus-visible:ring-primary/50"
           />
           <div className="absolute bottom-3 left-3 flex gap-2">
-            <Button variant="secondary" size="sm" className="h-7 text-xs rounded-full">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-7 text-xs rounded-full"
+            >
               Segments
             </Button>
-            <Button variant="secondary" size="sm" className="h-7 text-xs rounded-full">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-7 text-xs rounded-full"
+            >
               Draft SMS
             </Button>
           </div>
-          <Button size="icon" className="absolute bottom-3 right-3 h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button
+            size="icon"
+            className="absolute bottom-3 right-3 h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </div>

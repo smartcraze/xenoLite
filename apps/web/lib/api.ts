@@ -5,7 +5,7 @@ import { APP_CONFIG } from "./constants";
  */
 async function fetchApi(endpoint: string, options: RequestInit = {}) {
   let token = "";
-  
+
   if (typeof window === "undefined") {
     // Server-side
     const { cookies } = await import("next/headers");
@@ -18,7 +18,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
   }
 
   const url = `${APP_CONFIG.API_URL}${endpoint}`;
-  
+
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -42,61 +42,135 @@ export const api = {
   // Campaigns
   getCampaigns: () => fetchApi("/campaigns"),
   getCampaign: (id: string) => fetchApi(`/campaigns/${id}`),
-  createCampaign: (data: any) => fetchApi("/campaigns", { method: "POST", body: JSON.stringify(data) }),
-  sendCampaign: (id: string) => fetchApi(`/campaigns/${id}/send`, { method: "POST" }),
-  
+  createCampaign: (data: any) =>
+    fetchApi("/campaigns", { method: "POST", body: JSON.stringify(data) }),
+  sendCampaign: (id: string) =>
+    fetchApi(`/campaigns/${id}/send`, { method: "POST" }),
+
   // Analytics
   getAnalytics: (campaignId: string) => fetchApi(`/analytics/${campaignId}`),
 
   // AI
-  segmentAudience: (data: any) => fetchApi("/ai/segment", { method: "POST", body: JSON.stringify(data) }),
-  generateMessage: (data: any) => fetchApi("/ai/message", { method: "POST", body: JSON.stringify(data) }),
-  
+  segmentAudience: (data: any) =>
+    fetchApi("/ai/segment", { method: "POST", body: JSON.stringify(data) }),
+  generateMessage: (data: any) =>
+    fetchApi("/ai/message", { method: "POST", body: JSON.stringify(data) }),
+
   // Customers
   getCustomers: () => fetchApi("/customers"),
-  
+
   getDashboardStats: async () => {
-    // In a real scenario, you'd have a single /analytics/dashboard endpoint. 
-    // Here we'll parallel fetch campaigns and mock some aggregate stats.
-    let campaigns = [];
-    let customers = [];
+    let campaigns: any[] = [];
+    let customers: any[] = [];
     try {
       const [campaignsResult, customersResult] = await Promise.all([
-        fetchApi("/campaigns").catch(() => ({ data: [] })),
-        fetchApi("/customers").catch(() => ({ data: [] }))
+        fetchApi("/campaigns").catch(() => ({ data: { campaigns: [] } })),
+        fetchApi("/customers").catch(() => ({ data: { customers: [] } })),
       ]);
-      campaigns = campaignsResult.data || [];
-      customers = customersResult.data || [];
+      campaigns = campaignsResult.data?.campaigns || [];
+      customers = customersResult.data?.customers || [];
     } catch (e) {
       console.log("Stats fetch error:", e);
     }
-    
-    // Calculate realistic looking stats or mock them if no data
-    const totalCustomers = customers.length > 0 ? customers.length : 12490;
-    const campaignsSent = campaigns.length > 0 ? campaigns.length : 28;
-    
-    const sent = 12000;
-    const delivered = 11088;
-    const read = 7934;
-    const clicked = 2193;
-    const converted = 1024;
+
+    const totalCustomers = customers.length;
+    const campaignsSent = campaigns.length;
+
+    let sent = 0;
+    let delivered = 0;
+    let read = 0;
+    let clicked = 0;
+    const converted = 0; // The backend doesn't track 'converted' directly yet, but we'll include it in the funnel for UI completeness.
+
+    // Fetch analytics for all campaigns to aggregate
+    if (campaigns.length > 0) {
+      try {
+        const analyticsPromises = campaigns.map((c) =>
+          fetchApi(`/analytics/${c.id}`).catch(() => ({ data: null })),
+        );
+        const analyticsResults = await Promise.all(analyticsPromises);
+
+        for (const res of analyticsResults) {
+          if (res.data && res.data.metrics) {
+            sent += res.data.metrics.sent || 0;
+            delivered += res.data.metrics.delivered || 0;
+            read += res.data.metrics.read || 0;
+            clicked += res.data.metrics.clicked || 0;
+          }
+        }
+      } catch (e) {
+        console.log("Analytics aggregation error:", e);
+      }
+    }
+
+    const successfulSent = sent + delivered + read + clicked;
+    const deliveryRate =
+      successfulSent > 0
+        ? ((delivered + read + clicked) / successfulSent) * 100
+        : 0;
+    const readRate =
+      delivered + read + clicked > 0
+        ? ((read + clicked) / (delivered + read + clicked)) * 100
+        : 0;
+    // Calculate click rate based on total target/successful sent since CTR is clicks / deliveries usually
+    const clickRate =
+      delivered + read + clicked > 0
+        ? (clicked / (delivered + read + clicked)) * 100
+        : 0;
+
+    // For the UI Funnel, we need the raw accumulated totals (cascade representation)
+    const funnelSent = successfulSent;
+    const funnelDelivered = delivered + read + clicked;
+    const funnelRead = read + clicked;
+    const funnelClicked = clicked;
+
+    // Converted is mocked as a fraction of clicked since the backend doesn't have an order tracking integration yet
+    const funnelConverted = Math.floor(clicked * 0.4);
 
     const funnelData = [
-      { name: "Sent", value: sent, percentage: 100 },
-      { name: "Delivered", value: delivered, percentage: Math.round((delivered/sent)*1000)/10 },
-      { name: "Read", value: read, percentage: Math.round((read/sent)*1000)/10 },
-      { name: "Clicked", value: clicked, percentage: Math.round((clicked/sent)*1000)/10 },
-      { name: "Converted", value: converted, percentage: Math.round((converted/sent)*1000)/10 },
+      { name: "Sent", value: funnelSent, percentage: funnelSent > 0 ? 100 : 0 },
+      {
+        name: "Delivered",
+        value: funnelDelivered,
+        percentage:
+          funnelSent > 0
+            ? Math.round((funnelDelivered / funnelSent) * 1000) / 10
+            : 0,
+      },
+      {
+        name: "Read",
+        value: funnelRead,
+        percentage:
+          funnelSent > 0
+            ? Math.round((funnelRead / funnelSent) * 1000) / 10
+            : 0,
+      },
+      {
+        name: "Clicked",
+        value: funnelClicked,
+        percentage:
+          funnelSent > 0
+            ? Math.round((funnelClicked / funnelSent) * 1000) / 10
+            : 0,
+      },
+      {
+        name: "Converted",
+        value: funnelConverted,
+        percentage:
+          funnelSent > 0
+            ? Math.round((funnelConverted / funnelSent) * 1000) / 10
+            : 0,
+      },
     ];
 
     return {
       totalCustomers,
       campaignsSent,
-      deliveryRate: Math.round((delivered/sent)*1000)/10,
-      readRate: Math.round((read/sent)*1000)/10,
-      clickRate: Math.round((clicked/sent)*1000)/10,
+      deliveryRate: Math.round(deliveryRate * 10) / 10,
+      readRate: Math.round(readRate * 10) / 10,
+      clickRate: Math.round(clickRate * 10) / 10,
       recentCampaigns: campaigns.slice(0, 5),
       funnelData,
     };
-  }
+  },
 };

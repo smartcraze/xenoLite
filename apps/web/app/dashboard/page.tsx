@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import DashboardLoading from "./loading";
 import { AiCopilot } from "@/components/features/dashboard/ai-copilot";
 import { AiRecommendations } from "@/components/features/dashboard/ai-recommendations";
-import { StatCards } from "@/components/features/dashboard/stat-cards";
-import { PerformanceFunnel } from "@/components/features/dashboard/performance-funnel";
 import { LiveActivity } from "@/components/features/dashboard/live-activity";
+import { PerformanceFunnel } from "@/components/features/dashboard/performance-funnel";
 import { RecentCampaigns } from "@/components/features/dashboard/recent-campaigns";
+import { StatCards } from "@/components/features/dashboard/stat-cards";
 import { api } from "@/lib/api";
+import DashboardLoading from "./loading";
 
 export default async function DashboardPage() {
   // Fetch real data from the backend

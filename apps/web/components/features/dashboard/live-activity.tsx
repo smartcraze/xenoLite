@@ -1,5 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export function LiveActivity() {
   const activities = [
@@ -64,7 +70,9 @@ export function LiveActivity() {
                 <span className="text-muted-foreground">{activity.action}</span>{" "}
                 <span className="font-medium">{activity.target}</span>
               </p>
-              <span className="text-xs text-muted-foreground">{activity.time}</span>
+              <span className="text-xs text-muted-foreground">
+                {activity.time}
+              </span>
             </div>
           </div>
         ))}

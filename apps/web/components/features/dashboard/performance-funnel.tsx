@@ -1,15 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Mail, MousePointerClick, Send, ShoppingCart } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function PerformanceFunnel({ data }: { data?: any }) {
-  const defaultFunnelData = [
-    { name: "Sent", value: 12000, percentage: 100 },
-    { name: "Delivered", value: 11088, percentage: 92.4 },
-    { name: "Read", value: 7934, percentage: 71.6 },
-    { name: "Clicked", value: 2193, percentage: 18.2 },
-    { name: "Converted", value: 1024, percentage: 8.5 },
-  ];
-
   const layerStyles = [
     {
       icon: Send,
@@ -43,10 +35,30 @@ export function PerformanceFunnel({ data }: { data?: any }) {
     },
   ];
 
-  const rawFunnelData = data?.funnelData || defaultFunnelData;
+  const rawFunnelData = data?.funnelData || [];
 
   // Fixed visual widths to ensure a perfect pyramid shape regardless of exact data skew
   const visualWidths = [100, 85, 65, 40, 25];
+
+  if (rawFunnelData.length === 0 || rawFunnelData[0].value === 0) {
+    return (
+      <Card className="flex flex-col h-full border-border/50 bg-card">
+        <CardHeader className="flex flex-row items-center justify-between pb-6">
+          <CardTitle className="text-lg font-semibold">
+            Campaign Performance Funnel
+          </CardTitle>
+          <div className="text-xs font-medium border border-border px-3 py-1.5 rounded-md text-muted-foreground bg-background/50 cursor-pointer hover:bg-muted/50 transition-colors">
+            This Week v
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 flex flex-col justify-center items-center px-6 pb-8">
+          <div className="text-sm text-muted-foreground">
+            Not enough data to generate funnel. Send a campaign!
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="flex flex-col h-full border-border/50 bg-card">

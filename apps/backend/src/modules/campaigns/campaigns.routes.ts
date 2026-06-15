@@ -1,6 +1,6 @@
+import { Router } from "express";
 import { asyncHandler } from "@/lib/async-handler";
 import { authMiddleware } from "@/middleware/auth.middleware";
-import { Router } from "express";
 import { campaignController } from "./campaign.controller";
 
 const campaignsRouter = Router();

@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/features/dashboard/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
@@ -19,12 +18,12 @@ export default function DashboardLayout({
               Overview
             </h1>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <ThemeToggle />
           </div>
         </header>
-        
+
         {children}
       </main>
     </SidebarProvider>
