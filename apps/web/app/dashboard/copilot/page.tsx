@@ -6,10 +6,7 @@ export default async function CopilotPage() {
   const token = cookieStore.get("token")?.value || "";
 
   return (
-    <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500 h-full">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">AI Copilot</h1>
-      </div>
+    <div className="w-full h-[calc(100vh-8rem)] overflow-hidden animate-in fade-in duration-500">
       <CopilotChat token={token} />
     </div>
   );

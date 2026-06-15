@@ -1,14 +1,15 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { Bot, Send, User, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/lib/constants";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { Bot, Loader2, Send, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
 
 export function CopilotChat({ token }: { token: string }) {
   const [input, setInput] = useState("");
@@ -28,10 +29,17 @@ export function CopilotChat({ token }: { token: string }) {
   const isLoading = status === "submitted" || status === "streaming";
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      textareaRef.current?.focus();
+    }
+  }, [isLoading]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -52,176 +60,159 @@ export function CopilotChat({ token }: { token: string }) {
   };
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-12rem)] border-border/50 bg-card overflow-hidden">
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-center space-y-4">
-            <Bot className="h-12 w-12 text-primary/50 animate-bounce" />
-            <div>
-              <p className="font-medium text-foreground text-lg">Welcome to AI Copilot</p>
-              <p className="text-sm max-w-sm mx-auto mt-1">
-                I can help you segment audiences, draft marketing campaigns, and analyze performance. How can I assist you today?
-              </p>
-            </div>
-          </div>
-        ) : (
-          messages.map((m) => (
-            <div
-              key={m.id}
-              className={`flex gap-4 ${
-                m.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              {m.role === "assistant" && (
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Bot className="h-5 w-5 text-primary" />
+    <div className="h-full overflow-hidden bg-background rounded-2xl border border-border/50">
+      <Card className="h-full w-full border-0 rounded-none bg-background flex flex-col">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="w-full px-6 py-8 space-y-8">
+            {messages.length === 0 ? (
+              <div className="flex h-full min-h-[70vh] flex-col items-center justify-center text-center">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                  <Bot className="h-8 w-8 text-primary" />
                 </div>
-              )}
-              <div
-                className={`flex max-w-[80%] flex-col gap-2 rounded-2xl px-4 py-3 text-sm ${
-                  m.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-tr-sm"
-                    : "bg-muted text-foreground rounded-tl-sm"
-                }`}
-              >
-                {m.parts?.map((part, index) => {
-                  if (part.type === "text") {
-                    return (
-                      <div key={index} className="whitespace-pre-wrap">
-                        {part.text}
-                      </div>
-                    );
-                  }
-                  if (part.type === "reasoning") {
-                    return (
-                      <div
-                        key={index}
-                        className="text-xs text-muted-foreground border-l-2 border-primary/30 pl-2 my-1 italic"
-                      >
-                        {part.text}
-                      </div>
-                    );
-                  }
-                  if (part.type.startsWith("tool-") || part.type === "dynamic-tool") {
-                    const toolPart = part as any;
-                    const toolName = toolPart.toolName || part.type.replace("tool-", "");
-                    
-                    let statusText = "";
-                    let statusColor = "text-muted-foreground";
-                    if (toolPart.state === "input-streaming") {
-                      statusText = "Running...";
-                    } else if (toolPart.state === "input-available") {
-                      statusText = "Ready to run";
-                    } else if (toolPart.state === "output-available") {
-                      statusText = "Completed";
-                      statusColor = "text-emerald-500 font-medium dark:text-emerald-400";
-                    } else if (toolPart.state === "output-error") {
-                      statusText = "Error";
-                      statusColor = "text-destructive font-medium";
-                    }
 
-                    return (
-                      <div
-                        key={index}
-                        className="my-2 p-3 rounded-xl border border-border/60 bg-background/40 backdrop-blur-sm text-xs font-mono flex flex-col gap-2 shadow-sm min-w-[260px]"
-                      >
-                        <div className="flex items-center justify-between border-b border-border/30 pb-1.5">
-                          <span className="font-semibold text-foreground flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                            Tool: {toolName}
-                          </span>
-                          <span className={statusColor}>{statusText}</span>
-                        </div>
-                        {toolPart.input && (
-                          <div className="text-[10px] text-muted-foreground bg-muted/40 p-2 rounded-lg overflow-x-auto max-h-24">
-                            <strong className="text-foreground/70">Input:</strong>{" "}
-                            {typeof toolPart.input === "object"
-                              ? JSON.stringify(toolPart.input, null, 2)
-                              : String(toolPart.input)}
-                          </div>
-                        )}
-                        {toolPart.output && (
-                          <div className="text-[10px] text-foreground/90 bg-muted/60 p-2 rounded-lg overflow-x-auto border border-border/20 max-h-40">
-                            <strong className="text-foreground/70">Output:</strong>{" "}
-                            {typeof toolPart.output === "object"
-                              ? JSON.stringify(toolPart.output, null, 2)
-                              : String(toolPart.output)}
-                          </div>
-                        )}
-                        {toolPart.errorText && (
-                          <div className="text-[10px] text-destructive bg-destructive/10 p-2 rounded-lg overflow-x-auto">
-                            <strong>Error:</strong> {toolPart.errorText}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-              {m.role === "user" && (
-                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <User className="h-5 w-5 text-primary-foreground" />
-                </div>
-              )}
-            </div>
-          ))
-        )}
-        {isLoading && (
-          <div className="flex gap-4 justify-start animate-pulse">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Bot className="h-5 w-5 text-primary animate-spin" />
-            </div>
-            <div className="flex max-w-[80%] flex-col gap-2 rounded-2xl bg-muted px-4 py-3 text-sm rounded-tl-sm text-muted-foreground flex-1">
-              <div className="flex items-center justify-between">
-                <span>Copilot is working...</span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="xs"
-                  onClick={() => stop()}
-                  className="h-6 px-2 text-xs"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Welcome back
+                </h2>
 
-      {/* Input Area */}
-      <div className="p-4 bg-background border-t border-border/50">
-        <form
-          onSubmit={handleFormSubmit}
-          className="relative flex items-center w-full"
-        >
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Copilot something... (Press Enter to send)"
-            className="pr-12 resize-none overflow-hidden max-h-32 shadow-sm rounded-xl"
-            rows={1}
-            disabled={isLoading}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={!input?.trim() || isLoading}
-            className="absolute right-2 bottom-2 h-8 w-8 rounded-lg transition-all"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+                <p className="mt-2 max-w-md text-sm text-muted-foreground leading-relaxed">
+                  Ask anything about campaigns, audiences, analytics,
+                  automation, or performance optimization.
+                </p>
+              </div>
             ) : (
-              <Send className="h-4 w-4" />
+              messages.map((m) => (
+                <div
+                  key={m.id}
+                  className={`flex gap-4 ${
+                    m.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {m.role === "assistant" && (
+                    <div className="h-8 w-8 rounded-full border bg-background flex items-center justify-center shrink-0 sticky top-0">
+                      <Bot className="h-4 w-4 text-primary" />
+                    </div>
+                  )}
+
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-5 py-4 text-sm leading-7 shadow-sm ${
+                      m.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-br-md"
+                        : "bg-muted/60 border border-border/50 rounded-bl-md"
+                    }`}
+                  >
+                    {m.parts?.map((part, index) => {
+                      if (part.type === "text") {
+                        return (
+                          <div key={index} className="flex flex-col gap-2">
+                            <ReactMarkdown
+                              components={{
+                                p: ({ children }) => (
+                                  <p className="mb-2 last:mb-0 leading-relaxed">
+                                    {children}
+                                  </p>
+                                ),
+                                strong: ({ children }) => (
+                                  <strong className="font-semibold text-foreground">
+                                    {children}
+                                  </strong>
+                                ),
+                                ul: ({ children }) => (
+                                  <ul className="list-disc pl-5 mb-2 flex flex-col gap-1">
+                                    {children}
+                                  </ul>
+                                ),
+                                ol: ({ children }) => (
+                                  <ol className="list-decimal pl-5 mb-2 flex flex-col gap-1">
+                                    {children}
+                                  </ol>
+                                ),
+                                li: ({ children }) => (
+                                  <li className="leading-relaxed">
+                                    {children}
+                                  </li>
+                                ),
+                                code: ({ children }) => (
+                                  <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-primary font-semibold">
+                                    {children}
+                                  </code>
+                                ),
+                              }}
+                            >
+                              {part.text}
+                            </ReactMarkdown>
+                          </div>
+                        );
+                      }
+
+                      return null;
+                    })}
+                  </div>
+
+                  {m.role === "user" && (
+                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <User className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                  )}
+                </div>
+              ))
             )}
-            <span className="sr-only">Send</span>
-          </Button>
-        </form>
-      </div>
-    </Card>
+
+            {isLoading && (
+              <div className="flex gap-4">
+                <div className="h-8 w-8 rounded-full border bg-background flex items-center justify-center shrink-0">
+                  <Bot className="h-4 w-4 text-primary" />
+                </div>
+
+                <div className="rounded-2xl rounded-bl-md border bg-muted/50 px-5 py-4">
+                  <div className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" />
+                    <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.15s]" />
+                    <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.3s]" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        {/* Input */}
+        <div className="bg-background/95 backdrop-blur shrink-0">
+          <div className="w-full p-4">
+            <form onSubmit={handleFormSubmit} className="relative">
+              <Textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Message AI Copilot..."
+                rows={1}
+                disabled={isLoading}
+                className="min-h-[56px] max-h-40 resize-none rounded-2xl border-border/60 bg-muted/30 pr-14 py-4 text-sm shadow-sm focus-visible:ring-1"
+              />
+
+              <Button
+                type="submit"
+                size="icon"
+                disabled={!input.trim() || isLoading}
+                className="absolute bottom-3 right-3 h-8 w-8 rounded-xl"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </form>
+
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              AI can make mistakes. Verify important information.
+            </p>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
