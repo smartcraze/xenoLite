@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { generateText, Output } from "ai";
+import { generateText, streamText, Output } from "ai";
 import { analyticsService } from "../analytics/analytics.service";
 
 import {

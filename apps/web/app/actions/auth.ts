@@ -35,6 +35,8 @@ export async function login(formData: FormData) {
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 1 week
     });
+    cookieStore.set("userName", data.data.user.name, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("userEmail", data.data.user.email, { path: "/", maxAge: 60 * 60 * 24 * 7 });
 
     return { success: true };
   } catch (err) {
@@ -74,6 +76,8 @@ export async function signup(formData: FormData) {
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
+    cookieStore.set("userName", data.data.user.name, { path: "/", maxAge: 60 * 60 * 24 * 7 });
+    cookieStore.set("userEmail", data.data.user.email, { path: "/", maxAge: 60 * 60 * 24 * 7 });
 
     return { success: true };
   } catch (err) {
@@ -84,5 +88,7 @@ export async function signup(formData: FormData) {
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("token");
+  cookieStore.delete("userName");
+  cookieStore.delete("userEmail");
   redirect("/login");
 }

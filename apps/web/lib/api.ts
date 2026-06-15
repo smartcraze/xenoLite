@@ -32,7 +32,11 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.message || `API Error: ${response.status}`);
+    const errorMsg = errorBody.message || `API Error: ${response.status}`;
+    if (response.status === 401) {
+      throw new Error("UNAUTHORIZED");
+    }
+    throw new Error(errorMsg);
   }
 
   return response.json();
@@ -64,13 +68,15 @@ export const api = {
     let customers: any[] = [];
     try {
       const [campaignsResult, customersResult] = await Promise.all([
-        fetchApi("/campaigns").catch(() => ({ data: { campaigns: [] } })),
-        fetchApi("/customers").catch(() => ({ data: { customers: [] } })),
+        fetchApi("/campaigns"),
+        fetchApi("/customers"),
       ]);
       campaigns = campaignsResult.data?.campaigns || [];
       customers = customersResult.data?.customers || [];
-    } catch (e) {
+    } catch (e: any) {
       console.log("Stats fetch error:", e);
+      // Propagate the error so the page can handle 401
+      throw e;
     }
 
     const totalCustomers = customers.length;

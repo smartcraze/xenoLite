@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { Output, ToolLoopAgent } from "ai";
+import { convertToModelMessages, Output, ToolLoopAgent } from "ai";
 import type { Response } from "express";
 import { z } from "zod";
 import {
@@ -61,19 +61,12 @@ export const agentService = {
   /**
    * Execute the campaign agent loop and stream the output (text parts + tool events) to Express response
    */
-  async chatCampaignBuilderStream(prompt: string, res: Response) {
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    const result = await campaignAgent.stream({ prompt });
-
-    for await (const part of result.fullStream) {
-      res.write(`data: ${JSON.stringify(part)}\n\n`);
-    }
-
-    res.write("data: [DONE]\n\n");
-    res.end();
+  async chatCampaignBuilderStream(messages: any[], res: Response) {
+    const modelMessages = await convertToModelMessages(messages);
+    const result = await campaignAgent.stream({ messages: modelMessages });
+    result.pipeUIMessageStreamToResponse(res, {
+      originalMessages: messages,
+    });
   },
 
   /**

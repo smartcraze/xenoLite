@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { AiCopilot } from "@/components/features/dashboard/ai-copilot";
 import { AiRecommendations } from "@/components/features/dashboard/ai-recommendations";
 import { LiveActivity } from "@/components/features/dashboard/live-activity";
@@ -13,7 +14,10 @@ export default async function DashboardPage() {
   let statsData = null;
   try {
     statsData = await api.getDashboardStats();
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.message === "UNAUTHORIZED") {
+      redirect("/logout");
+    }
     console.error("Failed to fetch dashboard stats", err);
   }
 

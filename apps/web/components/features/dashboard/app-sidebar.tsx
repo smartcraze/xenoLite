@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { APP_CONFIG, SIDEBAR_ITEMS } from "@/lib/constants";
+import { cookies } from "next/headers";
 
 // Map icon strings back to actual Lucide components dynamically if needed,
 // but since we want to avoid complex mapping, we'll map them here:
@@ -37,7 +38,10 @@ const iconMap: Record<string, any> = {
   Settings,
 };
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const cookieStore = await cookies();
+  const userName = cookieStore.get("userName")?.value || "Guest User";
+  const userEmail = cookieStore.get("userEmail")?.value || "guest@xenolite.com";
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader className="py-6 px-4">
@@ -102,9 +106,9 @@ export function AppSidebar() {
             />
           </div>
           <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-medium truncate">Aarav Mehta</span>
+            <span className="text-sm font-medium truncate">{userName}</span>
             <span className="text-xs text-muted-foreground truncate">
-              aarav@xenolite.com
+              {userEmail}
             </span>
           </div>
         </div>

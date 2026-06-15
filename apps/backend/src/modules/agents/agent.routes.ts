@@ -10,7 +10,7 @@ const agentRouter = Router();
 // Chat campaign is very expensive (multi-step OpenAI calls + db queries), limit to 3 requests per minute
 const chatLimit = rateLimit({
   windowMs: 60 * 1000,
-  max: 3,
+  max: 10,
   message:
     "Too many campaign requests. Please wait a minute before creating another campaign.",
 });
@@ -18,7 +18,7 @@ const chatLimit = rateLimit({
 // Suggestions and message generation are single calls, limit to 10 requests per minute
 const standardLimit = rateLimit({
   windowMs: 60 * 1000,
-  max: 2,
+  max: 10,
   message: "Rate limit exceeded. Please try again in a minute.",
 });
 

@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 export const chatCampaignRequestSchema = z.object({
-  prompt: z.string().min(1),
-  stream: z.boolean().optional().default(false),
+  prompt: z.string().optional(),
+  messages: z.array(z.any()).optional(),
+  stream: z.boolean().optional().default(true), // Default to true since useChat expects streams
 });
 
 export const generateAgentMessageSchema = z.object({

@@ -11,6 +11,15 @@ export function proxy(request: NextRequest) {
 
   const isPublicRoute = publicRoutes.includes(pathname);
 
+  // If the user hits /logout, clear cookies and redirect to login
+  if (pathname === '/logout') {
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    response.cookies.delete('token');
+    response.cookies.delete('userName');
+    response.cookies.delete('userEmail');
+    return response;
+  }
+
   // If the user is authenticated and trying to access login/signup, redirect to dashboard
   if (token && isPublicRoute) {
     return NextResponse.redirect(new URL("/dashboard", request.url));

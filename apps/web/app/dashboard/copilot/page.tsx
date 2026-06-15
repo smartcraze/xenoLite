@@ -1,28 +1,16 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { cookies } from "next/headers";
+import { CopilotChat } from "@/components/features/dashboard/copilot-chat";
 
-export default function CopilotPage() {
+export default async function CopilotPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || "";
+
   return (
-    <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500">
+    <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500 h-full">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">AI Copilot</h1>
       </div>
-      <Card className="border-border/50 bg-card">
-        <CardHeader>
-          <CardTitle>AI Assistant</CardTitle>
-          <CardDescription>
-            Generate campaigns and segment audiences using AI.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center h-64 text-muted-foreground text-sm">
-          AI Copilot workspace coming soon.
-        </CardContent>
-      </Card>
+      <CopilotChat token={token} />
     </div>
   );
 }

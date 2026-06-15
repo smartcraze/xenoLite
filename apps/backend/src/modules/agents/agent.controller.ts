@@ -10,11 +10,19 @@ export const agentController = {
   async chatCampaign(request: Request, response: Response) {
     const body = chatCampaignRequestSchema.parse(request.body);
 
-    if (body.stream) {
-      return agentService.chatCampaignBuilderStream(body.prompt, response);
+    const messages = body.messages || (body.prompt ? [{ role: "user", content: body.prompt }] : []);
+
+    if (messages.length === 0) {
+      return response.status(400).json({ message: "Prompt or messages required" });
     }
 
-    const result = await agentService.chatCampaignBuilder(body.prompt);
+    if (body.stream) {
+      return agentService.chatCampaignBuilderStream(messages, response);
+    }
+
+    const lastMessage = messages[messages.length - 1];
+    const prompt = lastMessage.content || lastMessage.text || "";
+    const result = await agentService.chatCampaignBuilder(prompt);
     return sendSuccess(
       response,
       200,
